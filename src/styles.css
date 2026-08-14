@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+:root {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+/* 细滚动条 */
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* 弹窗倒计时进度条 */
+@keyframes popup-countdown {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+.popup-countdown {
+  animation: popup-countdown 8s linear forwards;
+}

@@ -1,0 +1,66 @@
+[package]
+name = "lanclip"
+version = "0.1.0"
+description = "局域网剪切板收件箱：无账号、无服务器、端到端加密"
+authors = ["lanclip"]
+edition = "2021"
+
+[lib]
+name = "lanclip_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["tray-icon", "image-png", "devtools", "macos-private-api"] }
+tauri-plugin-autostart = "2"
+tauri-plugin-notification = "2"
+
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+rmp-serde = "1"
+
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "sync", "time", "net"] }
+futures-util = "0.3"
+
+rusqlite = { version = "0.32", features = ["bundled"] }
+mdns-sd = "0.11"
+
+quinn = { version = "0.11", default-features = false, features = ["rustls", "log", "runtime-tokio"] }
+rustls = { version = "0.23", default-features = false, features = ["ring", "logging", "std", "tls12"] }
+rcgen = { version = "0.13", default-features = false, features = ["ring", "pem"] }
+
+ed25519-dalek = { version = "2", features = ["rand_core"] }
+rand = "0.8"
+blake3 = "1"
+chacha20poly1305 = "0.10"
+keyring = { version = "3", features = ["windows-native", "apple-native"] }
+arboard = "3"
+
+anyhow = "1"
+thiserror = "1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
+tracing-appender = "0.2"
+whoami = "1"
+if-addrs = "0.13"
+uuid = { version = "1", features = ["v4"] }
+chrono = { version = "0.4", features = ["serde"] }
+hex = "0.4"
+
+[target.'cfg(target_os = "windows")'.dependencies]
+windows = { version = "0.59", features = [
+  "Win32_Foundation",
+  "Win32_System_DataExchange",
+  "Win32_System_LibraryLoader",
+  "Win32_UI_WindowsAndMessaging",
+  "Win32_Graphics_Gdi",
+] }
+
+[profile.release]
+panic = "abort"
+codegen-units = 1
+lto = true
+opt-level = "s"
+strip = true
