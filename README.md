@@ -77,6 +77,26 @@ npm run tauri build    # 打包（Windows: NSIS 安装包；macOS: DMG）
 - 历史内容用本机密钥（存系统凭据库）加密后落库
 - 通知预览可关闭（敏感环境只显示来源设备）
 
+## 发布（GitHub Actions）
+
+仓库自带 `.github/workflows/release.yml`：推送 `v*` 标签（或在 Actions 页面手动触发）即会在
+macOS（Apple Silicon + Intel 双架构）、Windows、Linux 三个平台的官方 runner 上构建，
+并把产物自动发布到 GitHub Releases：
+
+| 平台 | 产物 |
+|---|---|
+| Windows | NSIS 安装包 `*_x64-setup.exe`、`.msi` |
+| macOS | `*_aarch64.dmg`（M 系列）、`*_x86_64.dmg`（Intel） |
+| Linux | `.deb`、`.rpm`、`.AppImage` |
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0   # 触发构建，完成后在仓库 Releases 页看到全部安装包
+```
+
+> macOS 产物未做开发者签名，首次打开需右键 → 打开。
+> 私有仓库的 Actions 消耗免费额度（macOS 按分钟 10 倍计费），按需触发即可。
+
 ## 本机自测
 
 ```bash

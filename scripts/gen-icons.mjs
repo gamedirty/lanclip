@@ -146,13 +146,42 @@ function makeICO(entries) {
   return Buffer.concat([header, dir, ...blobs]);
 }
 
+// ---------- ICNS (macOS) with embedded PNG entries ----------
+function makeICNS(entries) {
+  // entries: [{type: 'ic07', png: Buffer}]
+  const chunks = entries.map((e) => {
+    const head = Buffer.alloc(8);
+    head.write(e.type, 0, "ascii");
+    head.writeUInt32BE(e.png.length + 8, 4);
+    return Buffer.concat([head, e.png]);
+  });
+  const total = 8 + chunks.reduce((n, c) => n + c.length, 0);
+  const header = Buffer.alloc(8);
+  header.write("icns", 0, "ascii");
+  header.writeUInt32BE(total, 4);
+  return Buffer.concat([header, ...chunks]);
+}
+
 mkdirSync(outDir, { recursive: true });
 const png32 = encodePNG(32, 32, Buffer.from(drawIcon(32).px.buffer));
 const png128 = encodePNG(128, 128, Buffer.from(drawIcon(128).px.buffer));
+const png256 = encodePNG(256, 256, Buffer.from(drawIcon(256).px.buffer));
+const png512 = encodePNG(512, 512, Buffer.from(drawIcon(512).px.buffer));
+const png1024 = encodePNG(1024, 1024, Buffer.from(drawIcon(1024).px.buffer));
 writeFileSync(join(outDir, "32x32.png"), png32);
 writeFileSync(join(outDir, "128x128.png"), png128);
+writeFileSync(join(outDir, "128x128@2x.png"), png256);
 writeFileSync(join(outDir, "icon.ico"), makeICO([
   { png: png32, size: 32 },
   { png: png128, size: 128 },
 ]));
+writeFileSync(
+  join(outDir, "icon.icns"),
+  makeICNS([
+    { type: "ic07", png: png128 }, // 128x128
+    { type: "ic08", png: png256 }, // 256x256
+    { type: "ic09", png: png512 }, // 512x512
+    { type: "ic10", png: png1024 }, // 1024x1024 (512@2x)
+  ]),
+);
 console.log("icons written to", outDir);
